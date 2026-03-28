@@ -425,8 +425,8 @@
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Data\Nodes\Procedural\Shape\RoundedRectangleNode.cs" />
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Generation\Targets\Canvas\CanvasSubTarget.cs" />
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Data\Nodes\Input\CustomInterpolatorNode.cs" />
-    <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Generation\Enumerations\KeywordShaderStage.cs" />
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Drawing\Blackboard\BlackboardUtils.cs" />
+    <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Generation\Enumerations\KeywordShaderStage.cs" />
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Generation\Data\ConditionalField.cs" />
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Generation\Enumerations\NormalDropOffSpace.cs" />
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Data\Graphs\DefaultVector2MaterialSlot.cs" />
@@ -572,8 +572,8 @@
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Data\Nodes\Input\Texture\Texture3DAssetNode.cs" />
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Generation\Contexts\TargetPropertyGUIContext.cs" />
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Data\Nodes\Math\Trigonometry\ArccosineNode.cs" />
-    <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Drawing\Colors\CustomColorData.cs" />
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Data\Attributes\BuiltinKeywordAttribute.cs" />
+    <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Drawing\Colors\CustomColorData.cs" />
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Drawing\EdgeConnectorListener.cs" />
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Data\ContextData.cs" />
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Data\Graphs\GraphDataReadOnly.cs" />
@@ -656,8 +656,8 @@
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Drawing\Views\HelpBoxRow.cs" />
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Data\Nodes\UI\RenderTypeNode.cs" />
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Data\Implementation\NodeUtils.cs" />
-    <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Data\Legacy\ILegacyTarget.cs" />
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Drawing\Inspector\PropertyDrawers\Vector3PropertyDrawer.cs" />
+    <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Data\Legacy\ILegacyTarget.cs" />
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Data\Nodes\Artistic\Normal\NormalUnpackNode.cs" />
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Data\Nodes\MeshDeformation\ComputeDeformNode.cs" />
     <Compile Include="Library\PackageCache\com.unity.shadergraph@c8830f61858d\Editor\Generation\Enumerations\IncludeLocation.cs" />
