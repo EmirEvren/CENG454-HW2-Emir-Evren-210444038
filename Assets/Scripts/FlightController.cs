@@ -1,51 +1,68 @@
 // FlightController.cs
-// CENG 454 HW1: Sky-High Prototype
-// Author:  Emir Evren | Student ID:210444038
+// CENG 454 HW2: Sky-High Prototype II - Smooth Arcade Flight
+// Author:  Emir Evren | Student ID: 210444038
 
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class FlightController : MonoBehaviour
 {
-    [SerializeField] private float pitchSpeed = 45f;   // degrees/second
-    [SerializeField] private float yawSpeed = 45f;     // degrees/second
-    [SerializeField] private float rollSpeed = 45f;    // degrees/second
-    [SerializeField] private float thrustSpeed = 5f;   // units/second
+    [Header("Flight Characteristics")]
+    [SerializeField] private float pitchTorque = 60f; 
+    [SerializeField] private float yawTorque = 40f;   
+    [SerializeField] private float rollTorque = 80f;  
+    [SerializeField] private float thrustPower = 150f; 
+    
+    [Header("Fake Gravity Settings")]
+    [SerializeField] private float maxGravity = 9.81f; 
+    [SerializeField] private float speedToStayAfloat = 15f; 
 
     private Rigidbody rb;
+    private float pitchInput, yawInput, rollInput, thrustInput;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true;
+        rb.useGravity = false; 
+        rb.linearDamping = 1.5f;
+        rb.angularDamping = 12f; 
     }
 
     void Update()
     {
+        pitchInput = Input.GetAxis("Vertical");
+        yawInput = Input.GetAxis("Horizontal");
+
+        rollInput = 0f;
+        if (Input.GetKey(KeyCode.Q)) rollInput = 1f;
+        if (Input.GetKey(KeyCode.E)) rollInput = -1f;
+
+        thrustInput = Input.GetKey(KeyCode.Space) ? 1f : 0f;
+    }
+
+    void FixedUpdate()
+    {
+        HandleThrustAndFakeGravity();
         HandleRotation();
-        HandleThrust();
     }
 
     private void HandleRotation()
     {
-
-        float pitchInput = Input.GetAxis("Vertical");
-        transform.Rotate(Vector3.right * pitchInput * pitchSpeed * Time.deltaTime);
-
-        float yawInput = Input.GetAxis("Horizontal");
-        transform.Rotate(Vector3.up * yawInput * yawSpeed * Time.deltaTime);
-
-        float rollInput = 0f;
-        if (Input.GetKey(KeyCode.Q)) rollInput = 1f;
-        if (Input.GetKey(KeyCode.E)) rollInput = -1f;
-        transform.Rotate(Vector3.forward * rollInput * rollSpeed * Time.deltaTime);
+        Vector3 torque = new Vector3(pitchInput * pitchTorque, yawInput * yawTorque, rollInput * rollTorque);
+        rb.AddRelativeTorque(torque, ForceMode.Acceleration);
     }
 
-    private void HandleThrust()
+    private void HandleThrustAndFakeGravity()
     {
 
-        if (Input.GetKey(KeyCode.Space))
+        if (thrustInput > 0)
         {
-            transform.Translate(Vector3.forward * thrustSpeed * Time.deltaTime);
+            rb.AddRelativeForce(Vector3.forward * thrustPower, ForceMode.Acceleration);
         }
+
+        float forwardVelocity = transform.InverseTransformDirection(rb.linearVelocity).z;
+        float gravityMultiplier = 1f - Mathf.Clamp01(forwardVelocity / speedToStayAfloat);
+        Vector3 customGravity = Vector3.down * (maxGravity * gravityMultiplier);
+        rb.AddForce(customGravity, ForceMode.Acceleration);
     }
 }
