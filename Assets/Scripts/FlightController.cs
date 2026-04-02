@@ -28,6 +28,7 @@ public class FlightController : MonoBehaviour
     private Rigidbody rb;
     private float pitchInput, yawInput, rollInput, thrustInput;
     private AudioSource engineAudioSource;
+    private bool hasEngineStarted = false;
 
     void Start()
     {
@@ -42,7 +43,6 @@ public class FlightController : MonoBehaviour
             engineAudioSource.clip = engineSoundClip;
             engineAudioSource.loop = true;
             engineAudioSource.spatialBlend = 0f;
-            engineAudioSource.Play();
         }
     }
 
@@ -89,6 +89,14 @@ public class FlightController : MonoBehaviour
     {
         if (engineAudioSource == null) return;
 
+        if (!hasEngineStarted && thrustInput > 0)
+        {
+            hasEngineStarted = true;
+            engineAudioSource.Play();
+        }
+
+        if (!hasEngineStarted) return;
+
         float forwardVelocity = transform.InverseTransformDirection(rb.linearVelocity).z;
         
         float speedFactor = Mathf.Clamp01(forwardVelocity / (thrustPower / 3f)); 
@@ -98,5 +106,23 @@ public class FlightController : MonoBehaviour
 
         engineAudioSource.pitch = Mathf.Lerp(engineAudioSource.pitch, targetPitch, Time.deltaTime * audioTransitionSpeed);
         engineAudioSource.volume = Mathf.Lerp(engineAudioSource.volume, targetVolume, Time.deltaTime * audioTransitionSpeed);
+    }
+
+    public void StopEngine()
+    {
+        if (engineAudioSource != null)
+        {
+            engineAudioSource.Stop();
+        }
+        hasEngineStarted = false;
+        this.enabled = false;
+    }
+
+    private void OnDisable()
+    {
+        if (engineAudioSource != null)
+        {
+            engineAudioSource.Stop();
+        }
     }
 }

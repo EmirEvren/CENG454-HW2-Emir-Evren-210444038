@@ -1495,7 +1495,7 @@ MonoBehaviour:
   thrustPower: 100
   maxGravity: 9.81
   speedToStayAfloat: 15
-  engineSoundClip: {fileID: 8300000, guid: 6ed3420abb21a1940ab585709f632771, type: 3}
+  engineSoundClip: {fileID: 8300000, guid: e0b103ce4c3e3ab41b4fd53e29a765f7, type: 3}
   idlePitch: 0.5
   maxPitch: 2
   idleVolume: 0.3
@@ -1799,13 +1799,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1905152650}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.12915532, y: 8.271805e-25, z: -1.3234888e-23, w: 0.99162436}
-  m_LocalPosition: {x: 0.15, y: 4.53, z: -12.25}
+  m_LocalRotation: {x: 0.036202807, y: 3.308723e-24, z: -1.3234891e-23, w: 0.99934447}
+  m_LocalPosition: {x: 0.15, y: 4.23, z: -17.55}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1308006544}
-  m_LocalEulerAnglesHint: {x: 14.842, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 4.149, y: 0, z: 0}
 --- !u!114 &1905152652
 MonoBehaviour:
   m_ObjectHideFlags: 0
