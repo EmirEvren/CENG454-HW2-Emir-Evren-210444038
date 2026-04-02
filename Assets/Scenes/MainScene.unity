@@ -1495,6 +1495,12 @@ MonoBehaviour:
   thrustPower: 100
   maxGravity: 9.81
   speedToStayAfloat: 15
+  engineSoundClip: {fileID: 8300000, guid: 6ed3420abb21a1940ab585709f632771, type: 3}
+  idlePitch: 0.5
+  maxPitch: 2
+  idleVolume: 0.3
+  maxVolume: 1
+  audioTransitionSpeed: 2
 --- !u!64 &1308006543
 MeshCollider:
   m_ObjectHideFlags: 0
