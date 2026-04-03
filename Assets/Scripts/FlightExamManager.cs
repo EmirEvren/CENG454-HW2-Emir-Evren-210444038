@@ -4,84 +4,119 @@ using UnityEngine.SceneManagement;
 
 public class FlightExamManager : MonoBehaviour
 {
-    [SerializeField] private TMP_Text statusText; 
-    [SerializeField] private TMP_Text missionText; 
-    [SerializeField] private AudioClip successSound;
+    
+    [SerializeField] private TMP_Text status_txt_HUD; 
+    [SerializeField] private TMP_Text objectivePanel_text; 
+    [SerializeField] private AudioClip win_sound_fx;
+    [SerializeField] private AudioClip explode_fail_sfx;
 
     public bool hasTakenOff = false;
     public bool threatCleared = false;
     public bool missionComplete = false;
-    private bool isGameOver = false;
+    private bool is_player_dead = false; 
 
     void Start()
     {
-        if (missionText != null) missionText.text = "Objective: Take off from the runway.";
+        // right side of game starting panel for showing first comment of game situation
+        objectivePanel_text.text = "Objective: Take off from the runway.";
     }
 
     void Update()
-    {
-        if (isGameOver && Input.GetKeyDown(KeyCode.R))
+    {    
+        // for start again game r 
+        if(Input.GetKeyDown(KeyCode.R)) 
         {
-            RestartGame();
+            int current_lvl_index = SceneManager.GetActiveScene().buildIndex;
+            SceneManager.LoadScene(current_lvl_index);
         }
     }
 
     public void EnterDangerZone()
     {
-        statusText.text = "Entered a Dangerous Zone!";
-        statusText.color = Color.red;
-        if (missionText != null) missionText.text = "Objective: Survive and Escape the Zone!";
+        if(is_player_dead == false) 
+        {
+            status_txt_HUD.text = "Entered a Dangerous Zone!";
+            status_txt_HUD.color = Color.red;
+            objectivePanel_text.text = "Objective: Survive and Escape the Zone!";
+        }
     }
 
     public void ExitDangerZone()
     {
-        threatCleared = true; 
-        statusText.text = "Zone Cleared. Safe to Land!";
-        statusText.color = Color.green;
-        if (missionText != null) missionText.text = "Objective: Land safely at the airstrip.";
+        if (is_player_dead == false) 
+        {
+            threatCleared = true; 
+            status_txt_HUD.text = "Zone Cleared. Safe to Land!";
+            status_txt_HUD.color = Color.green;
+            objectivePanel_text.text = "Objective: Land safely at the airstrip.";
+        }
     }
 
     public void TryToLand()
     {
-        if (threatCleared && !missionComplete)
+        if (is_player_dead == false) 
         {
-            missionComplete = true;
-            isGameOver = true; 
-            statusText.text = "MISSION ACCOMPLISHED!";
-            statusText.color = Color.blue;
-            if (missionText != null) missionText.text = "You survived! Press 'R' to Restart.";
-            
-            if (successSound != null)
+            if (threatCleared == true) 
             {
-                AudioSource.PlayClipAtPoint(successSound, Camera.main.transform.position, 1f);
-            }
+                if (missionComplete == false) 
+                {
+                    missionComplete = true;
+                    is_player_dead = true; 
+                    
+                    status_txt_HUD.text = "MISSION ACCOMPLISHED!";
+                    status_txt_HUD.color = Color.blue;
+                    objectivePanel_text.text = "You survived! Press 'R' to Restart.";
+                    
+                    ClosingBackgroundSounds(); //for not mixing all sound here
 
-            GameObject playerPlane = GameObject.FindGameObjectWithTag("Player");
-            if (playerPlane != null)
-            {
-                FlightController ucusKodu = playerPlane.GetComponent<FlightController>();
-                if (ucusKodu != null) ucusKodu.enabled = false;
+                    AudioSource.PlayClipAtPoint(win_sound_fx, Camera.main.transform.position);
+
+                   
+                    FlightController player_flight_script = GameObject.FindGameObjectWithTag("Player").GetComponent<FlightController>();   // Taking away the flight keys so they don't crash post-victory
+                    player_flight_script.enabled = false; 
+                }
             }
-        }
-        else if (!threatCleared)
-        {
-            statusText.text = "Cannot land yet! Clear the threat zone first!";
-            statusText.color = Color.yellow;
+            else 
+            {
+                status_txt_HUD.text = "Cannot land yet! Clear the threat zone first!";
+                status_txt_HUD.color = Color.yellow;
+            }
         }
     }
 
     public void FailMission()
     {
-        missionComplete = false;
-        isGameOver = true; 
-        statusText.text = "MISSION FAILED!";
-        statusText.color = Color.red;
-        if (missionText != null) missionText.text = "Aircraft Destroyed. Press 'R' to Restart.";
-        Debug.Log("Mission failed.");
+        if (is_player_dead == false) 
+        {
+            is_player_dead = true; 
+            missionComplete = false;
+            
+            status_txt_HUD.text = "MISSION FAILED!";
+            status_txt_HUD.color = Color.red;
+            objectivePanel_text.text = "Aircraft Destroyed. Press 'R' to Restart."; 
+            
+            //for hearing better losing sound
+            ClosingBackgroundSounds(); 
+            
+            AudioSource.PlayClipAtPoint(explode_fail_sfx, Camera.main.transform.position);
+            Debug.Log("aircraft destroy game over "); 
+        }
     }
 
-    public void RestartGame()
+    void ClosingBackgroundSounds()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        //in danger zone sounds came when we tryna here losing sound
+        DangerZoneController danger_zone_script = FindObjectOfType<DangerZoneController>();
+        if(danger_zone_script != null) 
+        {
+            danger_zone_script.GetComponent<AudioSource>().Stop();
+        }
+
+        // turning off plane controler
+        GameObject player_plane_obj = GameObject.FindGameObjectWithTag("Player");
+        if(player_plane_obj != null) 
+        {
+            player_plane_obj.GetComponent<AudioSource>().Stop();
+        }
     }
 }

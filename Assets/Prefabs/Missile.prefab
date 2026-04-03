@@ -9510,8 +9510,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d65f26945b27874c8b575cd6c2b4a6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MissileHoming
-  moveSpeed: 60
-  turnSpeed: 5
+  moveSpeed: 40
+  turnSpeed: 3
 --- !u!54 &6433877185256959842
 Rigidbody:
   m_ObjectHideFlags: 0

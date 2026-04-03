@@ -1096,8 +1096,8 @@ Transform:
   m_GameObject: {fileID: 891796195}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.2, y: 40, z: -0.17}
-  m_LocalScale: {x: 10, y: 100, z: 10}
+  m_LocalPosition: {x: 0.01, y: 40, z: -0.15}
+  m_LocalScale: {x: 10.9754, y: 100, z: 10.73033}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 265620712}
@@ -1287,9 +1287,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74c45317320b04046b64cdabcd95af0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlightExamManager
-  statusText: {fileID: 1265131757}
-  missionText: {fileID: 862702670}
-  successSound: {fileID: 8300000, guid: f0bdb229304bf6c41ab5e44aa8a1221d, type: 3}
+  status_txt_HUD: {fileID: 1265131757}
+  objectivePanel_text: {fileID: 862702670}
+  win_sound_fx: {fileID: 8300000, guid: 381567b883d7246448fa49ce475510e5, type: 3}
+  explode_fail_sfx: {fileID: 8300000, guid: 4c401234f98c4664295e8eb336a45fb0, type: 3}
   hasTakenOff: 0
   threatCleared: 0
   missionComplete: 0
@@ -1922,32 +1923,36 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1059043367}
     - target: {fileID: 1508629359154757519, guid: 573a7da8a818e4c4fa4968f891a429a8, type: 3}
+      propertyPath: warningClip
+      value: 
+      objectReference: {fileID: 8300000, guid: abebd0b8df4d451419664b4ad9f241d9, type: 3}
+    - target: {fileID: 1508629359154757519, guid: 573a7da8a818e4c4fa4968f891a429a8, type: 3}
       propertyPath: missileLauncher
       value: 
       objectReference: {fileID: 1513531787}
     - target: {fileID: 3009411399625508158, guid: 573a7da8a818e4c4fa4968f891a429a8, type: 3}
       propertyPath: m_LocalScale.x
-      value: 780.0103
+      value: 1017.0485
       objectReference: {fileID: 0}
     - target: {fileID: 3009411399625508158, guid: 573a7da8a818e4c4fa4968f891a429a8, type: 3}
       propertyPath: m_LocalScale.y
-      value: 598.6
+      value: 511.02478
       objectReference: {fileID: 0}
     - target: {fileID: 3009411399625508158, guid: 573a7da8a818e4c4fa4968f891a429a8, type: 3}
       propertyPath: m_LocalScale.z
-      value: 611.0796
+      value: 552.7466
       objectReference: {fileID: 0}
     - target: {fileID: 3009411399625508158, guid: 573a7da8a818e4c4fa4968f891a429a8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 551.8965
+      value: 492.8625
       objectReference: {fileID: 0}
     - target: {fileID: 3009411399625508158, guid: 573a7da8a818e4c4fa4968f891a429a8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 164.6878
+      value: 208.4634
       objectReference: {fileID: 0}
     - target: {fileID: 3009411399625508158, guid: 573a7da8a818e4c4fa4968f891a429a8, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 463.9139
+      value: 482.4021
       objectReference: {fileID: 0}
     - target: {fileID: 3009411399625508158, guid: 573a7da8a818e4c4fa4968f891a429a8, type: 3}
       propertyPath: m_LocalRotation.w
