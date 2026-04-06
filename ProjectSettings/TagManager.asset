@@ -6,6 +6,7 @@ TagManager:
   tags:
   - DangerZone
   - Missile
+  - World
   layers:
   - Default
   - TransparentFX

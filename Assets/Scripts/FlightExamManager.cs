@@ -1,10 +1,10 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections; // Zamanlayıcı (Coroutine) için bu kütüphane şart
 
 public class FlightExamManager : MonoBehaviour
 {
-    
     [SerializeField] private TMP_Text status_txt_HUD; 
     [SerializeField] private TMP_Text objectivePanel_text; 
     [SerializeField] private AudioClip win_sound_fx;
@@ -23,11 +23,10 @@ public class FlightExamManager : MonoBehaviour
 
     void Update()
     {    
-        // for start again game r 
+        // Oyuncu 2 saniye beklemek istemezse manuel olarak R'ye basıp direkt reset atabilir
         if(Input.GetKeyDown(KeyCode.R)) 
         {
-            int current_lvl_index = SceneManager.GetActiveScene().buildIndex;
-            SceneManager.LoadScene(current_lvl_index);
+            RestartGame();
         }
     }
 
@@ -71,7 +70,6 @@ public class FlightExamManager : MonoBehaviour
 
                     AudioSource.PlayClipAtPoint(win_sound_fx, Camera.main.transform.position);
 
-                   
                     FlightController player_flight_script = GameObject.FindGameObjectWithTag("Player").GetComponent<FlightController>();   // Taking away the flight keys so they don't crash post-victory
                     player_flight_script.enabled = false; 
                 }
@@ -93,15 +91,38 @@ public class FlightExamManager : MonoBehaviour
             
             status_txt_HUD.text = "MISSION FAILED!";
             status_txt_HUD.color = Color.red;
-            objectivePanel_text.text = "Aircraft Destroyed. Press 'R' to Restart."; 
+            
+            // Ekrandaki yazıyı 2 saniyelik bekleme sürecine uygun olarak güncelledik
+            objectivePanel_text.text = "Aircraft Destroyed. Restarting..."; 
             
             //for hearing better losing sound
             ClosingBackgroundSounds(); 
             
             AudioSource.PlayClipAtPoint(explode_fail_sfx, Camera.main.transform.position);
             Debug.Log("aircraft destroy game over "); 
+
+            // 2 saniyelik otomatik reset sürecini başlat
+            StartCoroutine(AutoRestartRoutine());
         }
     }
+
+    // --- YENİ EKLENEN 2 SANİYE BEKLETME VE RESET KISMI ---
+    private IEnumerator AutoRestartRoutine()
+    {
+        // Tam 2 saniye bekle
+        yield return new WaitForSeconds(2f);
+        
+        // Bekleme bittikten sonra oyunu resetle
+        RestartGame();
+    }
+
+    // Kod tekrarını önlemek için reset atma işlemini tek fonksiyona aldık
+    private void RestartGame()
+    {
+        int current_lvl_index = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(current_lvl_index);
+    }
+    // -----------------------------------------------------
 
     void ClosingBackgroundSounds()
     {
