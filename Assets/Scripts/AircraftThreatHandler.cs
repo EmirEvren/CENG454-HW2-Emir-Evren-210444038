@@ -7,11 +7,14 @@ public class AircraftThreatHandler : MonoBehaviour
     
     [Header("Visual Effects")]
     [SerializeField] private GameObject explosionEffectPrefab; 
+
     private void OnTriggerEnter(Collider other)
     {
+
         if (other.CompareTag("Missile"))
         {
             Debug.Log("BOOM! Missile hit the aircraft!");
+            
             if (explosionEffectPrefab != null)
             {
                 GameObject fx = Instantiate(explosionEffectPrefab, transform.position, transform.rotation);
@@ -21,10 +24,9 @@ public class AircraftThreatHandler : MonoBehaviour
             {
                 AudioSource.PlayClipAtPoint(explosionSound, Camera.main.transform.position, 1f);
             }
+
             if (examManager != null) examManager.FailMission();
 
-            FlightController ucusKodu = GetComponent<FlightController>();
-            if (ucusKodu != null) ucusKodu.enabled = false;
             Destroy(other.gameObject);
         }
     }

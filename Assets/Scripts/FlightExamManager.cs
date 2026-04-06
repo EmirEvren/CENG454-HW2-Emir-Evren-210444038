@@ -1,39 +1,43 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
-using System.Collections; // Zamanlayıcı (Coroutine) için bu kütüphane şart
+using System.Collections;
 
 public class FlightExamManager : MonoBehaviour
 {
+    [Header("UI Elements")]
     [SerializeField] private TMP_Text status_txt_HUD; 
     [SerializeField] private TMP_Text objectivePanel_text; 
+
+    [Header("Audio Clips")]
     [SerializeField] private AudioClip win_sound_fx;
     [SerializeField] private AudioClip explode_fail_sfx;
 
+    [Header("Mission States")]
     public bool hasTakenOff = false;
     public bool threatCleared = false;
     public bool missionComplete = false;
-    private bool is_player_dead = false; 
+    public bool is_player_dead = false; 
 
     void Start()
     {
-        // right side of game starting panel for showing first comment of game situation
+        Time.timeScale = 1f; 
         objectivePanel_text.text = "Objective: Take off from the runway.";
+        status_txt_HUD.text = ""; 
     }
 
     void Update()
     {    
-        // Oyuncu 2 saniye beklemek istemezse manuel olarak R'ye basıp direkt reset atabilir
-        if(Input.GetKeyDown(KeyCode.R)) 
-        {
-            RestartGame();
-        }
+
+        if(Input.GetKeyDown(KeyCode.R)) RestartGame();
     }
+
 
     public void EnterDangerZone()
     {
-        if(is_player_dead == false) 
+        if(!is_player_dead && !missionComplete) 
         {
+            CancelInvoke("ClearStatusHUD"); 
             status_txt_HUD.text = "Entered a Dangerous Zone!";
             status_txt_HUD.color = Color.red;
             objectivePanel_text.text = "Objective: Survive and Escape the Zone!";
@@ -42,102 +46,143 @@ public class FlightExamManager : MonoBehaviour
 
     public void ExitDangerZone()
     {
-        if (is_player_dead == false) 
+        if (!is_player_dead && !missionComplete) 
         {
             threatCleared = true; 
-            status_txt_HUD.text = "Zone Cleared. Safe to Land!";
-            status_txt_HUD.color = Color.green;
-            objectivePanel_text.text = "Objective: Land safely at the airstrip.";
+            objectivePanel_text.text = "Objective: Return to base and land.";
+            ClearStatusHUD(); 
         }
     }
 
-    public void TryToLand()
+    public void ShowApproachMessage()
     {
-        if (is_player_dead == false) 
+        if (!is_player_dead && !missionComplete)
         {
-            if (threatCleared == true) 
+            CancelInvoke("ClearStatusHUD");
+            if (threatCleared)
             {
-                if (missionComplete == false) 
-                {
-                    missionComplete = true;
-                    is_player_dead = true; 
-                    
-                    status_txt_HUD.text = "MISSION ACCOMPLISHED!";
-                    status_txt_HUD.color = Color.blue;
-                    objectivePanel_text.text = "You survived! Press 'R' to Restart.";
-                    
-                    ClosingBackgroundSounds(); //for not mixing all sound here
-
-                    AudioSource.PlayClipAtPoint(win_sound_fx, Camera.main.transform.position);
-
-                    FlightController player_flight_script = GameObject.FindGameObjectWithTag("Player").GetComponent<FlightController>();   // Taking away the flight keys so they don't crash post-victory
-                    player_flight_script.enabled = false; 
-                }
+                status_txt_HUD.text = "Zone Cleared. Safe to Land!";
+                status_txt_HUD.color = Color.green;
             }
-            else 
+            else
             {
-                status_txt_HUD.text = "Cannot land yet! Clear the threat zone first!";
+                status_txt_HUD.text = "WARNING: Threat active! Clear the zone first!";
                 status_txt_HUD.color = Color.yellow;
             }
         }
     }
 
-    public void FailMission()
+    public void ClearStatusHUD()
     {
-        if (is_player_dead == false) 
-        {
-            is_player_dead = true; 
-            missionComplete = false;
-            
-            status_txt_HUD.text = "MISSION FAILED!";
-            status_txt_HUD.color = Color.red;
-            
-            // Ekrandaki yazıyı 2 saniyelik bekleme sürecine uygun olarak güncelledik
-            objectivePanel_text.text = "Aircraft Destroyed. Restarting..."; 
-            
-            //for hearing better losing sound
-            ClosingBackgroundSounds(); 
-            
-            AudioSource.PlayClipAtPoint(explode_fail_sfx, Camera.main.transform.position);
-            Debug.Log("aircraft destroy game over "); 
+        if (!is_player_dead && !missionComplete)
+            status_txt_HUD.text = "";
+    }
 
-            // 2 saniyelik otomatik reset sürecini başlat
-            StartCoroutine(AutoRestartRoutine());
+
+    public void TryToLand()
+    {
+        if (!is_player_dead && threatCleared && !missionComplete) 
+        {
+            missionComplete = true;
+            is_player_dead = true; 
+            
+            status_txt_HUD.text = "MISSION ACCOMPLISHED!";
+            status_txt_HUD.color = Color.cyan;
+            objectivePanel_text.text = "Success! Press R to Play Again.";
+            
+            ClosingBackgroundSounds();
+            AudioSource.PlayClipAtPoint(win_sound_fx, Camera.main.transform.position);
+
+            LockPlayerControls();
+        }
+        else if (!is_player_dead && !threatCleared)
+        {
+            status_txt_HUD.text = "Cannot land yet! Clear the threat zone first!";
+            status_txt_HUD.color = Color.red;
+            Invoke("ClearStatusHUD", 3f);
         }
     }
 
-    // --- YENİ EKLENEN 2 SANİYE BEKLETME VE RESET KISMI ---
+
+    public void FailMission()
+    {
+        if (!is_player_dead) 
+        {
+            is_player_dead = true; 
+            status_txt_HUD.text = "MISSION FAILED!";
+            status_txt_HUD.color = Color.red;
+            objectivePanel_text.text = "Aircraft Destroyed. Press R to Restart."; 
+            
+            ClosingBackgroundSounds(); 
+            AudioSource.PlayClipAtPoint(explode_fail_sfx, Camera.main.transform.position);
+            LockPlayerControls(); // Otomatik restart atmaz
+        }
+    }
+
+
+    public void OutOfBoundsFail()
+    {
+        if (is_player_dead) return;
+
+        is_player_dead = true;
+        status_txt_HUD.text = "OUT OF BOUNDS!";
+        status_txt_HUD.color = Color.red;
+        objectivePanel_text.text = "Returning to start point in 3s...";
+
+        ClosingBackgroundSounds();
+        AudioSource.PlayClipAtPoint(explode_fail_sfx, Camera.main.transform.position);
+        
+        LockPlayerControls();
+        StartCoroutine(AutoRestartRoutine()); 
+    }
+
+    private void LockPlayerControls()
+    {
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            MonoBehaviour[] scripts = playerObj.GetComponentsInChildren<MonoBehaviour>();
+            foreach (var s in scripts)
+            {
+
+                if (s.GetType() != typeof(FlightExamManager)) 
+                {
+                    s.enabled = false;
+                }
+            }
+
+
+            Rigidbody rb = playerObj.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+                rb.isKinematic = true; 
+            }
+        }
+    }
+
     private IEnumerator AutoRestartRoutine()
     {
-        // Tam 2 saniye bekle
-        yield return new WaitForSeconds(2f);
-        
-        // Bekleme bittikten sonra oyunu resetle
+
+        yield return new WaitForSecondsRealtime(3f);
         RestartGame();
     }
 
-    // Kod tekrarını önlemek için reset atma işlemini tek fonksiyona aldık
     private void RestartGame()
     {
-        int current_lvl_index = SceneManager.GetActiveScene().buildIndex;
-        SceneManager.LoadScene(current_lvl_index);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
-    // -----------------------------------------------------
 
     void ClosingBackgroundSounds()
     {
-        //in danger zone sounds came when we tryna here losing sound
-        DangerZoneController danger_zone_script = FindObjectOfType<DangerZoneController>();
-        if(danger_zone_script != null) 
-        {
-            danger_zone_script.GetComponent<AudioSource>().Stop();
-        }
 
-        // turning off plane controler
-        GameObject player_plane_obj = GameObject.FindGameObjectWithTag("Player");
-        if(player_plane_obj != null) 
-        {
-            player_plane_obj.GetComponent<AudioSource>().Stop();
-        }
+        DangerZoneController danger = Object.FindFirstObjectByType<DangerZoneController>();
+        if(danger != null && danger.GetComponent<AudioSource>() != null) 
+            danger.GetComponent<AudioSource>().Stop();
+        
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if(player != null && player.GetComponent<AudioSource>() != null) 
+            player.GetComponent<AudioSource>().Stop();
     }
 }

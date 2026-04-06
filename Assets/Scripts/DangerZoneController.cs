@@ -6,30 +6,23 @@ public class DangerZoneController : MonoBehaviour
     [SerializeField] private FlightExamManager examManager;
     [SerializeField] private MissileLauncher missileLauncher;
     [SerializeField] private float missileDelay = 5f;
-
-    [Header("Audio Settings")]
     [SerializeField] private AudioClip warningClip; 
     
     private AudioSource audioSource; 
-
     private Coroutine activeCountdown;
-
     private void Start()
     {
-
         audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-        }
-        
+        if (audioSource == null) audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false; 
     }
 
-    private void OnTriggerEnter(Collider collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (collision.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
+            if (activeCountdown != null) StopCoroutine(activeCountdown);
+
             if (warningClip != null && audioSource != null)
             {
                 audioSource.clip = warningClip;
@@ -37,28 +30,27 @@ public class DangerZoneController : MonoBehaviour
             }
 
             examManager.EnterDangerZone();
-            activeCountdown = StartCoroutine(LaunchCountdownCoroutine(collision.transform));
+  
+            activeCountdown = StartCoroutine(LaunchCountdownCoroutine(other.transform));
         }
     }
 
-    private void OnTriggerExit(Collider collision)
+    private void OnTriggerExit(Collider other)
     {
-        if (collision.CompareTag("Player"))
+        if (other.CompareTag("Player"))
         {
-            if (audioSource != null && audioSource.isPlaying)
-            {
-                audioSource.Stop();
-            }
+            if (audioSource != null) audioSource.Stop();
 
+            
             if (activeCountdown != null)
             {
                 StopCoroutine(activeCountdown);
                 activeCountdown = null;
             }
-            if (missileLauncher != null)
-            {
-                missileLauncher.DestroyActiveMissile();
-            }
+
+       
+            if (missileLauncher != null) missileLauncher.DestroyActiveMissile();
+
             examManager.ExitDangerZone();
         }
     }
@@ -71,5 +63,7 @@ public class DangerZoneController : MonoBehaviour
         {
             missileLauncher.Launch(playerTransform);
         }
+    
+        activeCountdown = null;
     }
 }
