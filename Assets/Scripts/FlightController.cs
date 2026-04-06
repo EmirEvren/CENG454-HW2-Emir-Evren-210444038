@@ -19,11 +19,11 @@ public class FlightController : MonoBehaviour
 
     [Header("Audio Settings")]
     [SerializeField] private AudioClip engineSoundClip;
-    [SerializeField] private float idlePitch = 0.5f;   
-    [SerializeField] private float maxPitch = 2.0f;    
-    [SerializeField] private float idleVolume = 0.3f;  
-    [SerializeField] private float maxVolume = 1.0f;   
-    [SerializeField] private float audioTransitionSpeed = 2f; 
+    [SerializeField] private float idlePitch = 0.25f;   
+    [SerializeField] private float maxPitch = 0.7f;    
+    [SerializeField] private float idleVolume = 0.05f;  
+    [SerializeField] private float maxVolume = 0.14f;   
+    [SerializeField] private float audioTransitionSpeed = 0.6f; 
 
     private Rigidbody rb;
     private float pitchInput, yawInput, rollInput, thrustInput;
